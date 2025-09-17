@@ -132,6 +132,17 @@ def f13():
 
     '''
     raise NotImplementedError()
+
+def f14():
+    '''Выведите 3 последние записи из таблицы student.
+    Сортировку не использовать.
+    Атрибуты вывода: id, surname
+
+    '''
+    raise NotImplementedError()
+
+
+
 func_register = {
     '1': f1,
     '2': f2,
@@ -145,5 +156,6 @@ func_register = {
     '10': f10,
     '11': f11,
     '12': f12,
-    '13': f13
+    '13': f13,
+    '14': f14
 }
