@@ -6,7 +6,9 @@ def f1():
     Атрибуты вывода: name, surname, age.
 
     """
-    print("\n")
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 1: Список всех студентов")
+    print("="*50)
     con = sqlite3.connect("ursei.db")
     curs = con.cursor()
 
@@ -33,16 +35,41 @@ def f1():
     #Выводим таблицу
     print(pt)
     con.close()
-    # raise NotImplementedError()
 
 
 def f2():
-    """Выведите отсортированный по фамилиям список студентов из группы ЮРИ-401.
+    """Выведите отсортированный по фамилиям список студентов из группы РЕК-201.
     Имя группы произвольно.
     Атрибуты вывода: "Группа", "Фамилия", "Имя".
 
     """
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 2: Студенты группы РЕК-201")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 g.name as "Группа", 
+                 s.surname as "Фамилия", 
+                 s.name as "Имя"
+                 FROM student s
+                 JOIN "group" g ON s.group_id = g.id
+                 WHERE g.name LIKE 'РЕК-201'
+                 ORDER BY s.surname''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
 
 
 def f3():
@@ -50,14 +77,65 @@ def f3():
     Атрибуты вывода: Название факультета, фамилия.
 
     """
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 3: Девушки на факультете Реклама")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 d.name as "Название факультета", 
+                 s.surname as "Фамилия"
+                 FROM student s
+                 JOIN "group" g ON s.group_id = g.id
+                 JOIN department d ON g.department_id = d.id
+                 WHERE d.name = 'Реклама' AND s.gender = 'Женский'
+                 ORDER BY s.surname''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
+
 
 def f4():
     """Определите количество молодых людей, обучающихся на юридическом факультете.
     Атрибуты вывода: 'Кол-во молодых людей'. Количество строк: 1.
 
     """
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 4: Молодые люди на юридическом факультете")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 COUNT(*) as "Кол-во молодых людей"
+                 FROM student s
+                 JOIN "group" g ON s.group_id = g.id
+                 JOIN department d ON g.department_id = d.id
+                 WHERE d.name = 'Юриспруденция' AND s.gender = 'Мужской' ''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
 
 
 def f5():
@@ -66,15 +144,66 @@ def f5():
     Атрибуты вывода: 'Юр. фак-т. Средний возраст'. Количество строк: 1.
 
     """
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 5: Средний возраст на юридическом факультете")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 ROUND(AVG(s.age)) as "Юр. фак-т. Средний возраст"
+                 FROM student s
+                 JOIN "group" g ON s.group_id = g.id
+                 JOIN department d ON g.department_id = d.id
+                 WHERE d.name = 'Юриспруденция' ''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
+
 
 def f6():
     """Выведите студентов количество, обучающихся на каждом факультете.
     Атрибуты вывода: 'Факультет', 'Количество'. Количество строк должно быть 
     равно количеству факультетов.
 
-        """
-    raise NotImplementedError()
+    """
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 6: Количество студентов по факультетам")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 d.name as "Факультет", 
+                 COUNT(s.id) as "Количество"
+                 FROM department d
+                 JOIN "group" g ON d.id = g.department_id
+                 JOIN student s ON g.id = s.group_id
+                 GROUP BY d.name
+                 ORDER BY "Количество" DESC''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
 
 
 def f7():
@@ -83,7 +212,34 @@ def f7():
     Атрибуты вывода: 'Факультет', 'Средний возраст'.
 
     """
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 7: Средний возраст по факультетам")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 d.name as "Факультет", 
+                 ROUND(AVG(s.age), 2) as "Средний возраст"
+                 FROM department d
+                 JOIN "group" g ON d.id = g.department_id
+                 JOIN student s ON g.id = s.group_id
+                 GROUP BY d.name
+                 ORDER BY d.name''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
+
 
 def f8():
     """Выведите список студентов, которые не обучаются на юридическом факультете.
@@ -91,7 +247,35 @@ def f8():
     первой буквы имени и точки (напр. Иванов И.).
     
     """
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 8: Студенты не юридического факультета")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 d.name as "Факультет", 
+                 g.name as "Группа", 
+                 s.surname || ' ' || substr(s.name, 1, 1) || '.' as "ФИО"
+                 FROM student s
+                 JOIN "group" g ON s.group_id = g.id
+                 JOIN department d ON g.department_id = d.id
+                 WHERE d.name != 'Юриспруденция'
+                 ORDER BY d.name, g.name, s.surname''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
+
 
 def f9():
     """Выведите список студентов юридического факультета, у которых возраст
@@ -99,22 +283,108 @@ def f9():
     Атрибуты вывода: 'Факультет', 'Фамилия', 'Возраст'.
 
     """
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 9: Студенты юрфака с возрастом меньше среднего")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 d.name as "Факультет", 
+                 s.surname as "Фамилия", 
+                 s.age as "Возраст"
+                 FROM student s
+                 JOIN "group" g ON s.group_id = g.id
+                 JOIN department d ON g.department_id = d.id
+                 WHERE d.name = 'Юриспруденция' 
+                 AND s.age < (SELECT AVG(age) FROM student s2
+                             JOIN "group" g2 ON s2.group_id = g2.id
+                             JOIN department d2 ON g2.department_id = d2.id
+                             WHERE d2.name = 'Юриспруденция')
+                 ORDER BY s.age''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
+
 
 def f10():
     """Выведите список студентов, у которых фамилия начинается на букву 'К'.
     Атрибуты вывода: 'Факультет', 'Группа', 'Фамилия'.
 
     """
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 10: Студенты с фамилией на 'К'")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 d.name as "Факультет", 
+                 g.name as "Группа", 
+                 s.surname as "Фамилия"
+                 FROM student s
+                 JOIN "group" g ON s.group_id = g.id
+                 JOIN department d ON g.department_id = d.id
+                 WHERE s.surname LIKE 'К%'
+                 ORDER BY d.name, g.name, s.surname''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
+
 
 def f11():
-    """Выведите список студентов группы ЮРИ-401 (имя группы произвольно),
+    """Выведите список студентов группы РЕК-201 (имя группы произвольно),
     у которых имя заканчивается на букву 'й' (напр. Аркадий).
     Атрибуты вывода: 'Группа', 'Имя', 'Фамилия'.
 
     """
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 11: Студенты РЕК-201 с именами на 'й'")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 g.name as "Группа", 
+                 s.name as "Имя", 
+                 s.surname as "Фамилия"
+                 FROM student s
+                 JOIN "group" g ON s.group_id = g.id
+                 WHERE g.name = 'РЕК-201' AND s.name LIKE '%й'
+                 ORDER BY s.surname''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
 
 
 def f12():
@@ -122,16 +392,66 @@ def f12():
     Атрибуты вывода: "Фамилия", "Кол-во символов"
 
     '''
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 12: Студент с самой длинной фамилией")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 surname as "Фамилия", 
+                 LENGTH(surname) as "Кол-во символов"
+                 FROM student
+                 ORDER BY LENGTH(surname) DESC
+                 LIMIT 1''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
 
 
 def f13():
     '''Выведите уникальный список женских имен и количество их повторений.
     Список должен быть отсортирован по количеству повторений в порядке убывания.
-    Атрибуты вывода: "Фамилия", "Кол-во повторений"
+    Атрибуты вывода: "Имя", "Кол-во повторений"
 
     '''
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 13: Женские имена и их повторения")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
+
+    curs.execute('''SELECT 
+                 name as "Имя", 
+                 COUNT(*) as "Кол-во повторений"
+                 FROM student
+                 WHERE gender = 'Женский'
+                 GROUP BY name
+                 ORDER BY COUNT(*) DESC, name''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
+
 
 def f14():
     '''Выведите 3 последние записи из таблицы student.
@@ -139,8 +459,31 @@ def f14():
     Атрибуты вывода: id, surname
 
     '''
-    raise NotImplementedError()
+    print("\n" + "="*50)
+    print("ФУНКЦИЯ 14: 3 последние записи студентов")
+    print("="*50)
+    con = sqlite3.connect("ursei.db")
+    curs = con.cursor()
 
+    curs.execute('''SELECT 
+                 id, 
+                 surname
+                 FROM student
+                 ORDER BY id DESC
+                 LIMIT 3''')
+    
+    col_names = [cn[0] for cn in curs.description]
+    rows = curs.fetchall()
+
+    pt = PrettyTable(col_names)
+    for col in col_names:
+        pt.align[col] = "l"
+
+    for row in rows:
+        pt.add_row(row)
+    
+    print(pt)
+    con.close()
 
 
 func_register = {
