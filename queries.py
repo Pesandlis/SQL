@@ -469,8 +469,9 @@ def f14():
                  id, 
                  surname
                  FROM student
-                 ORDER BY id DESC
-                 LIMIT 3''')
+                 WHERE id IN (SELECT id FROM student 
+                 EXCEPT 
+                 SELECT id FROM student LIMIT (SELECT COUNT(*) FROM student) - 3)''')
     
     col_names = [cn[0] for cn in curs.description]
     rows = curs.fetchall()
